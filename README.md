@@ -1,8 +1,8 @@
 # marks
 
-A simple CLI tool written in Go to preview Markdown files in your browser.
+A simple CLI tool written in Go to preview Markdown files in your browser with GitHub-style rendering.
 
-`marks` reads a markdown file, converts it to HTML, serves it locally, and automatically opens your default browser.
+`marks` reads a markdown file, converts it to HTML, applies GitHub markdown styling, creates a temporary HTML file, and opens it automatically in your default browser.
 
 Repository: https://github.com/hitalloazevedo/marks
 
@@ -10,8 +10,9 @@ Repository: https://github.com/hitalloazevedo/marks
 
 ## Features
 
-- Preview Markdown in browser
-- Local HTTP server
+- Preview Markdown files in browser
+- GitHub-style markdown rendering
+- No local server required
 - Automatic browser opening
 - Lightweight and fast
 - Written in Go
@@ -20,40 +21,20 @@ Repository: https://github.com/hitalloazevedo/marks
 
 ## Installation
 
-### Clone repository
+## Option 1: Install from binary release
+
+Download the latest release from:
+
+https://github.com/hitalloazevedo/marks/releases/latest
+
+After downloading:
 
 ```bash
-git clone https://github.com/hitalloazevedo/marks.git
-cd marks
+chmod +x marks
+mv marks ~/.local/bin/marks
 ```
 
-### Install dependencies
-
-```bash
-go mod tidy
-```
-
-### Run install script
-
-```bash
-chmod +x install.sh
-./install.sh
-```
-
-This will:
-
-- build the binary
-- install it to:
-
-```bash
-~/.local/bin/marks
-```
-
----
-
-## PATH setup
-
-If `~/.local/bin` is not in your PATH, add this to your shell config.
+Make sure `~/.local/bin` is in your PATH.
 
 ### zsh
 
@@ -67,6 +48,39 @@ source ~/.zshrc
 ```bash
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
+```
+
+---
+
+## Option 2: Build locally
+
+Clone repository:
+
+```bash
+git clone https://github.com/hitalloazevedo/marks.git
+cd marks
+```
+
+Install dependencies:
+
+```bash
+go mod tidy
+```
+
+Run install script:
+
+```bash
+chmod +x install.sh
+./install.sh
+```
+
+This script will:
+
+- build the binary
+- install it to:
+
+```bash
+~/.local/bin/marks
 ```
 
 ---
@@ -85,17 +99,15 @@ Preview any markdown file:
 marks docs/setup.md
 ```
 
-This will:
+What happens:
 
-1. convert markdown to HTML
-2. start a local server
-3. open browser automatically
+1. Reads markdown file
+2. Converts markdown to HTML
+3. Applies GitHub markdown CSS styling
+4. Creates temporary HTML file
+5. Opens file in your default browser
 
-Default URL:
-
-```text
-http://localhost:8080
-```
+No server is started.
 
 ---
 
@@ -105,11 +117,7 @@ http://localhost:8080
 marks notes.md
 ```
 
-Browser opens:
-
-```text
-http://localhost:8080
-```
+The browser opens a temporary rendered HTML preview automatically.
 
 ---
 
@@ -143,14 +151,25 @@ go get github.com/pkg/browser
 
 ---
 
+## Project structure
+
+```bash
+.
+├── marks.go
+├── install.sh
+├── static/
+│   └── github-markdown.css
+```
+
+---
+
 ## Future improvements
 
 - live reload on file changes
 - syntax highlighting
-- GitHub markdown styling
-- custom port support
-- dark mode
-- configurable theme
+- custom themes
+- watch mode
+- export to HTML file
 
 ---
 
