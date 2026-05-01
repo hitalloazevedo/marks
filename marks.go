@@ -1,15 +1,18 @@
 package main
 
 import (
+	_ "embed"
 	"bytes"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/pkg/browser"
 	"github.com/yuin/goldmark"
 )
+
+//go:embed static/github-markdown.css
+var githubCSS string
 
 func main() {
 	file := os.Args[1]
@@ -24,21 +27,29 @@ func main() {
 		log.Fatal(err)
 	}
 
-	html := fmt.Sprintf(`
-	<html>
-	<body style="max-width:900px;margin:3rem auto;font-family:sans-serif">
-	%s
-	</body>
-	</html>
-	`, buf.String())
+	html := fmt.Sprintf(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+	<style>
+		html {
+			margin: 4rem;
+		}
+	</style>
+  <style>%s</style>
+<body class="markdown-body">
+%s
+</body>
+</html>
+`, githubCSS, buf.String())
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, html)
-	})
+	tmp, err := os.CreateTemp("", "marks-*.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	go http.ListenAndServe(":8080", nil)
+	tmp.WriteString(html)
+	tmp.Close()
 
-	browser.OpenURL("http://localhost:8080")
-
-	select {}
+	browser.OpenFile(tmp.Name())
 }
