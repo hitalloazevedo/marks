@@ -4,8 +4,6 @@ A simple CLI tool written in Go to preview Markdown files in your browser with G
 
 `marks` reads a markdown file, converts it to HTML, applies GitHub markdown styling, creates a temporary HTML file, and opens it automatically in your default browser.
 
-Repository: https://github.com/hitalloazevedo/marks
-
 ---
 
 ## Features
