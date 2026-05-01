@@ -174,3 +174,7 @@ go get github.com/pkg/browser
 ## License
 
 MIT
+
+## Screenshot
+<img width="1920" height="965" alt="image" src="https://github.com/user-attachments/assets/b07e91e9-bc74-4818-9ee4-e0468c3334f7" />
+
