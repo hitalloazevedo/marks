@@ -1,0 +1,286 @@
+/* Page chrome around the GitHub markdown styles. Colors match github-markdown.css. */
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #f6f8fa;
+  --fg: #1f2328;
+  --muted: #656d76;
+  --border: #d0d7de;
+  --accent: #0969da;
+  --topbar-h: 44px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --bg-subtle: #161b22;
+    --fg: #e6edf3;
+    --muted: #848d97;
+    --border: #30363d;
+    --accent: #2f81f7;
+    color-scheme: dark;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-padding-top: calc(var(--topbar-h) + 16px); }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+}
+
+/* --- Top bar --- */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: var(--topbar-h);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner {
+  max-width: 1320px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.doc-name { font-weight: 600; }
+.doc-path {
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.doc-meta { margin-left: auto; color: var(--muted); }
+.close-page {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  min-width: 28px;
+  padding: 0 6px;
+  justify-content: center;
+  font: inherit;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.close-page:hover { color: var(--fg); background: var(--bg-subtle); border-color: var(--border); }
+.close-page svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+}
+.progress {
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 2px;
+  width: 0;
+  background: var(--accent);
+}
+
+/* --- Layout --- */
+.layout {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 40px 32px 120px;
+  display: grid;
+  grid-template-columns: minmax(0, 980px);
+  justify-content: center;
+  gap: 56px;
+}
+.layout.has-toc { grid-template-columns: minmax(0, 980px) 240px; }
+@media (max-width: 1200px) {
+  .layout.has-toc { grid-template-columns: minmax(0, 980px); }
+  .toc { display: none; }
+}
+@media (max-width: 640px) {
+  .layout { padding: 24px 16px 80px; }
+  .topbar-inner { padding: 0 16px; }
+  .doc-path { display: none; }
+}
+
+/* --- Table of contents --- */
+.toc {
+  position: sticky;
+  top: calc(var(--topbar-h) + 24px);
+  align-self: start;
+  max-height: calc(100vh - var(--topbar-h) - 48px);
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.toc-title {
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: 11px;
+  margin-bottom: 8px;
+  padding-left: 12px;
+}
+.toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--border); }
+.toc a {
+  display: block;
+  padding: 4px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  color: var(--muted);
+  text-decoration: none;
+}
+.toc a:hover { color: var(--fg); }
+.toc a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+.toc .toc-l3 a { padding-left: 24px; }
+
+/* --- Markdown body tweaks --- */
+.markdown-body { --base-size-8: 8px; --base-size-16: 16px; font-size: 16px; line-height: 1.65; }
+.markdown-body li + li { margin-top: .3em; }
+
+/* Task lists: goldmark doesn't add GitHub's task-list classes, so match on the checkbox. */
+.markdown-body li:has(> input[type="checkbox"]:first-child) { list-style: none; }
+.markdown-body li > input[type="checkbox"]:first-child { margin: 0 .35em .2em -1.4em; vertical-align: middle; }
+
+.markdown-body .footnotes > hr { display: none; }
+
+.markdown-body :is(h1, h2, h3, h4, h5, h6) { position: relative; }
+.markdown-body .heading-anchor {
+  position: absolute;
+  left: -1.1em;
+  padding-right: .3em;
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+}
+.markdown-body :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor { opacity: 1; }
+
+/* Tables: wrap text to fit, scroll horizontally only when they truly can't fit. */
+.markdown-body .table-wrap {
+  overflow-x: auto;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.markdown-body .table-wrap table {
+  display: table;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  overflow: visible;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.markdown-body .table-wrap :is(th, td) {
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 8px 14px;
+  vertical-align: top;
+  min-width: 80px;
+}
+.markdown-body .table-wrap :is(th, td):last-child { border-right: 0; }
+.markdown-body .table-wrap tr:last-child > td { border-bottom: 0; }
+.markdown-body .table-wrap thead th { background: var(--bg-subtle); text-align: left; white-space: nowrap; }
+.markdown-body .table-wrap tbody tr:nth-child(2n) { background: color-mix(in srgb, var(--bg-subtle) 60%, transparent); }
+.markdown-body .table-wrap tbody tr:hover { background: var(--bg-subtle); }
+.markdown-body .table-wrap td code { white-space: nowrap; }
+
+/* Code blocks */
+.markdown-body .code-block { position: relative; margin-bottom: 16px; }
+.markdown-body .code-block pre { margin: 0; border: 1px solid var(--border); border-radius: 8px; }
+.markdown-body pre { tab-size: 4; }
+.markdown-body pre.chroma { background-color: var(--bg-subtle); line-height: 1.5; }
+.markdown-body pre.chroma .line { display: inline; }
+.markdown-body .code-lang {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  pointer-events: none;
+  transition: opacity .15s;
+}
+.markdown-body .code-copy {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 3px 8px;
+  font: 12px/1.4 inherit;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.markdown-body .code-block:hover .code-copy { opacity: 1; }
+.markdown-body .code-block:hover .code-lang { opacity: 0; }
+
+/* Mermaid diagrams */
+.markdown-body .diagram { margin-bottom: 16px; overflow-x: auto; }
+.markdown-body .diagram.rendered {
+  padding: 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+.markdown-body .diagram.rendered.full { cursor: zoom-out; text-align: left; }
+.markdown-body .diagram.full svg { max-width: none !important; }
+.markdown-body .diagram-error {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #d1242f;
+  border-left: 3px solid #d1242f;
+}
+
+/* Front matter */
+.markdown-body .front-matter { margin-bottom: 24px; }
+.markdown-body .front-matter summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 8px;
+}
+.markdown-body .front-matter th { width: 1%; white-space: nowrap; background: var(--bg-subtle); }
+.markdown-body .front-matter td { white-space: pre-wrap; }
+
+/* Alerts */
+.markdown-body .markdown-alert { border-radius: 0 6px 6px 0; background: color-mix(in srgb, var(--bg-subtle) 70%, transparent); }
+.markdown-body .markdown-alert-title { gap: 8px; margin-bottom: 8px; }
+.markdown-body .alert-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.markdown-body img { border-radius: 4px; }
+
+@media print {
+  .topbar, .toc, .code-copy { display: none; }
+  .layout { display: block; padding: 0; }
+}
