@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.Title}}</title>
+  <base href="{{.BaseHref}}">
+  <style>{{.CSS}}</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <span class="doc-name">{{.FileName}}</span>
+      <span class="doc-path" title="{{.Dir}}">{{.Dir}}</span>
+      <span class="doc-meta">{{.ReadMinutes}} min read</span>
+      <button class="close-page" type="button" title="Close this tab" aria-label="Close this tab">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+      </button>
+    </div>
+    <div class="progress"></div>
+  </header>
+
+  <div class="layout{{if .TOC}} has-toc{{end}}">
+    <main>
+      <article class="markdown-body">
+        {{.FrontMatter}}
+        {{.Body}}
+      </article>
+    </main>
+    {{- if .TOC}}
+    <nav class="toc" aria-label="Contents">
+      <div class="toc-title">Contents</div>
+      <ol>
+        {{- range .TOC}}
+        <li class="toc-l{{.Level}}"><a href="#{{.ID}}">{{.Text}}</a></li>
+        {{- end}}
+      </ol>
+    </nav>
+    {{- end}}
+  </div>
+
+  <script>{{.JS}}</script>
+  {{- if .HasMermaid}}
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+
+    const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: dark ? "dark" : "default",
+      securityLevel: "strict",
+      fontFamily: getComputedStyle(document.body).fontFamily,
+    });
+
+    let i = 0;
+    for (const pre of document.querySelectorAll("pre.mermaid")) {
+      const box = pre.parentElement;
+      const id = "mermaid-" + i++;
+      try {
+        const { svg } = await mermaid.render(id, pre.textContent);
+        box.innerHTML = svg;
+        box.classList.add("rendered");
+        box.title = "Click to toggle full size";
+      } catch (err) {
+        document.getElementById("d" + id)?.remove();
+        const msg = document.createElement("div");
+        msg.className = "diagram-error";
+        msg.textContent = "Diagram failed to render: " + (err?.message ?? err);
+        box.prepend(msg);
+      }
+    }
+  </script>
+  {{- end}}
+</body>
+</html>

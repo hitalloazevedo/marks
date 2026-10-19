@@ -9,7 +9,14 @@ A simple CLI tool written in Go to preview Markdown files in your browser with G
 ## Features
 
 - Preview Markdown files in browser
-- GitHub-style markdown rendering
+- GitHub-style markdown rendering (light and dark, follows your system)
+- GitHub Flavored Markdown: tables, task lists, strikethrough, autolinks, footnotes, definition lists
+- GitHub alerts (`> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`)
+- Syntax highlighting for fenced code blocks, with a copy button
+- Mermaid diagrams (```` ```mermaid ````), click a diagram to toggle full size
+- Sticky table of contents with current-section highlight
+- YAML front matter shown as a small table
+- Relative images and links resolve against the markdown file's folder
 - No local server required
 - Automatic browser opening
 - Lightweight and fast
@@ -138,14 +145,16 @@ go build -o marks
 ## Dependencies
 
 - github.com/yuin/goldmark
+- github.com/alecthomas/chroma/v2 (syntax highlighting)
 - github.com/pkg/browser
 
-Install manually:
+Install with:
 
 ```bash
-go get github.com/yuin/goldmark
-go get github.com/pkg/browser
+go mod download
 ```
+
+Mermaid is loaded from the jsDelivr CDN only when a document contains a diagram. Offline, the diagram source is shown instead.
 
 ---
 
@@ -153,10 +162,15 @@ go get github.com/pkg/browser
 
 ```bash
 .
-├── marks.go
+├── marks.go          # CLI: read file, write temp HTML, open browser
+├── render.go         # markdown → HTML (extensions, highlighting, alerts, TOC)
+├── render_test.go
 ├── install.sh
 ├── static/
-│   └── github-markdown.css
+│   ├── github-markdown.css
+│   ├── marks.css     # layout, tables, code blocks, diagrams
+│   ├── marks.js      # anchors, copy buttons, TOC highlight
+│   └── page.html     # page template
 ```
 
 ---
@@ -164,7 +178,7 @@ go get github.com/pkg/browser
 ## Future improvements
 
 - live reload on file changes
-- syntax highlighting
+- math (KaTeX)
 - custom themes
 - watch mode
 - export to HTML file
